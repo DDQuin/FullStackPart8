@@ -30,21 +30,34 @@ export const ALL_BOOKS = gql`
   }
 `;
 
-export const CREATE_PERSON = gql`
-  mutation createPerson(
-    $name: String!
-    $street: String!
-    $city: String!
-    $phone: String
+export const CREATE_BOOK = gql`
+  mutation createBook(
+    $title: String!
+    $published: Int!
+    $author: String!
+    $genres: [String!]!
   ) {
-    addPerson(name: $name, street: $street, city: $city, phone: $phone) {
-      name
-      phone
-      id
-      address {
-        street
-        city
-      }
+    addBook(
+      title: $title
+      published: $published
+      author: $author
+      genres: $genres
+    ) {
+      title
+      published
+      author
+      genres
+    }
+  }
+`;
+
+export const CREATE_BOOK_TEST = gql`
+  mutation {
+    addBook(title: "wwww", published: 333, author: "ddqion", genres: ["fpp"]) {
+      title
+      published
+      author
+      genres
     }
   }
 `;

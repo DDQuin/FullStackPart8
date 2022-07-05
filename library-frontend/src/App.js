@@ -10,6 +10,14 @@ const App = () => {
   const [page, setPage] = useState("authors");
   const resultAuthor = useQuery(ALL_AUTHORS);
   const resultBook = useQuery(ALL_BOOKS);
+  const [errorMessage, setErrorMessage] = useState(null);
+
+  const notify = (message) => {
+    setErrorMessage(message);
+    setTimeout(() => {
+      setErrorMessage(null);
+    }, 5000);
+  };
 
   if (!resultAuthor.data || !resultBook.data) {
     return <div></div>;
@@ -17,6 +25,7 @@ const App = () => {
 
   return (
     <div>
+      <Notify errorMessage={errorMessage} />
       <div>
         <button onClick={() => setPage("authors")}>authors</button>
         <button onClick={() => setPage("books")}>books</button>
@@ -30,9 +39,16 @@ const App = () => {
 
       <Books show={page === "books"} books={resultBook.data.allBooks} />
 
-      <NewBook show={page === "add"} />
+      <NewBook show={page === "add"} setError={notify} />
     </div>
   );
+};
+
+const Notify = ({ errorMessage }) => {
+  if (!errorMessage) {
+    return null;
+  }
+  return <div style={{ color: "red" }}>{errorMessage}</div>;
 };
 
 export default App;
