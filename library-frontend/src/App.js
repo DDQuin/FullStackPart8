@@ -4,13 +4,14 @@ import Authors from "./components/Authors";
 import Books from "./components/Books";
 import NewBook from "./components/NewBook";
 
-import { ALL_AUTHORS } from "./queries";
+import { ALL_AUTHORS, ALL_BOOKS } from "./queries";
 
 const App = () => {
   const [page, setPage] = useState("authors");
-  const result = useQuery(ALL_AUTHORS);
+  const resultAuthor = useQuery(ALL_AUTHORS);
+  const resultBook = useQuery(ALL_BOOKS);
 
-  if (!result.data) {
+  if (!resultAuthor.data || !resultBook.data) {
     return <div></div>;
   }
 
@@ -22,9 +23,12 @@ const App = () => {
         <button onClick={() => setPage("add")}>add book</button>
       </div>
 
-      <Authors show={page === "authors"} authors={result.data.allAuthors} />
+      <Authors
+        show={page === "authors"}
+        authors={resultAuthor.data.allAuthors}
+      />
 
-      <Books show={page === "books"} />
+      <Books show={page === "books"} books={resultBook.data.allBooks} />
 
       <NewBook show={page === "add"} />
     </div>
