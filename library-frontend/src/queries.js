@@ -76,16 +76,11 @@ export const FIND_PERSON = gql`
   }
 `;
 
-export const EDIT_NUMBER = gql`
-  mutation editNumber($name: String!, $phone: String!) {
-    editNumber(name: $name, phone: $phone) {
+export const EDIT_AUTHOR = gql`
+  mutation editAuthor($name: String!, $setBornTo: Int!) {
+    editAuthor(name: $name, setBornTo: $setBornTo) {
       name
-      phone
-      address {
-        street
-        city
-      }
-      id
+      born
     }
   }
 `;
