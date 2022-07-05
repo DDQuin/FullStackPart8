@@ -27,12 +27,12 @@ const Authors = ({ show, authors, setError }) => {
           ))}
         </tbody>
       </table>
-      <EditAuthor setError={setError} />
+      <EditAuthor setError={setError} authors={authors} />
     </div>
   );
 };
 
-const EditAuthor = ({ setError }) => {
+const EditAuthor = ({ setError, authors }) => {
   const [name, setName] = useState("");
   const [born, setBorn] = useState(0);
   const [editAuthor, result] = useMutation(EDIT_AUTHOR, {
@@ -55,6 +55,11 @@ const EditAuthor = ({ setError }) => {
     setBorn(0);
   };
 
+  const handleChange = (val) => {
+    console.log(val);
+    setName(val);
+  };
+
   useEffect(() => {
     if (result.data && result.data.editAuthor === null) {
       setError("author not found");
@@ -65,13 +70,14 @@ const EditAuthor = ({ setError }) => {
     <div>
       <h2>Set birthyear</h2>
       <form onSubmit={submit}>
-        <div>
-          name
-          <input
-            value={name}
-            onChange={({ target }) => setName(target.value)}
-          />
-        </div>
+        <select
+          value={name}
+          onChange={({ target }) => handleChange(target.value)}
+        >
+          {authors.map((a) => {
+            return <option value={a.name}>{a.name}</option>;
+          })}
+        </select>
         <div>
           born
           <input
