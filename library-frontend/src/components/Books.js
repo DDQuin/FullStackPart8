@@ -5,6 +5,7 @@ import { useQuery } from "@apollo/client";
 const Books = (props) => {
   const [genreSelected, setGenre] = useState("");
   const { loading, error, data } = useQuery(BOOKS_GENRE, {
+    fetchPolicy: "network-only",
     refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
     variables: { genre: genreSelected },
     onError: (error) => {

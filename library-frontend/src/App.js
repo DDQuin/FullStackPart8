@@ -11,8 +11,12 @@ import Recommendations from "./components/Recommendation";
 const App = () => {
   const [token, setToken] = useState(null);
   const [page, setPage] = useState("authors");
-  const resultAuthor = useQuery(ALL_AUTHORS);
-  const resultBook = useQuery(ALL_BOOKS);
+  const resultAuthor = useQuery(ALL_AUTHORS, {
+    fetchPolicy: "network-only",
+  });
+  const resultBook = useQuery(ALL_BOOKS, {
+    fetchPolicy: "network-only",
+  });
   const [errorMessage, setErrorMessage] = useState(null);
   const client = useApolloClient();
 
