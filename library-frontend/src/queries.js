@@ -10,6 +10,14 @@ export const ALL_PERSONS = gql`
   }
 `;
 
+export const USER = gql`
+  query {
+    me {
+      favouriteGenre
+    }
+  }
+`;
+
 export const ALL_AUTHORS = gql`
   query {
     allAuthors {
