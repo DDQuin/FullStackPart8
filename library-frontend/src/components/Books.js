@@ -1,14 +1,24 @@
 import { useState } from "react";
+import { BOOKS_GENRE, ALL_AUTHORS, ALL_BOOKS } from "../queries";
+import { useQuery } from "@apollo/client";
 
 const Books = (props) => {
   const [genreSelected, setGenre] = useState("");
+  const { loading, error, data } = useQuery(BOOKS_GENRE, {
+    refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
+    variables: { genre: genreSelected },
+    onError: (error) => {
+      props.setError(error.graphQLErrors[0]);
+    },
+  });
+
   if (!props.show) {
     return null;
   }
 
   let books = [...props.books];
-  if (genreSelected !== "") {
-    books = books.filter((b) => b.genres.includes(genreSelected));
+  if (genreSelected !== "" && !loading) {
+    books = data.allBooks;
   }
   return (
     <div>

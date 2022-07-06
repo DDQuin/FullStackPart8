@@ -56,7 +56,11 @@ const App = () => {
         setError={notify}
       />
 
-      <Books show={page === "books"} books={resultBook.data.allBooks} />
+      <Books
+        show={page === "books"}
+        books={resultBook.data.allBooks}
+        setError={notify}
+      />
 
       <NewBook show={page === "add"} setError={notify} />
       <LoginForm
