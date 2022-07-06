@@ -27,7 +27,9 @@ const Authors = ({ show, authors, setError }) => {
           ))}
         </tbody>
       </table>
-      <EditAuthor setError={setError} authors={authors} />
+      {authors.length > 0 && (
+        <EditAuthor setError={setError} authors={authors} />
+      )}
     </div>
   );
 };

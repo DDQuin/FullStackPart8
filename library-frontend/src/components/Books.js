@@ -1,14 +1,19 @@
+import { useState } from "react";
+
 const Books = (props) => {
+  const [genreSelected, setGenre] = useState("");
   if (!props.show) {
     return null;
   }
 
-  const books = [...props.books];
-
+  let books = [...props.books];
+  if (genreSelected !== "") {
+    books = books.filter((b) => b.genres.includes(genreSelected));
+  }
   return (
     <div>
       <h2>books</h2>
-
+      {genreSelected && <span>in genre {genreSelected}</span>}
       <table>
         <tbody>
           <tr>
@@ -25,6 +30,13 @@ const Books = (props) => {
           ))}
         </tbody>
       </table>
+      <button onClick={() => setGenre("refactoring")}> refactoring</button>
+      <button onClick={() => setGenre("agile")}> agile</button>
+      <button onClick={() => setGenre("patterns")}> patterns</button>
+      <button onClick={() => setGenre("design")}> design</button>
+      <button onClick={() => setGenre("crime")}> crime</button>
+      <button onClick={() => setGenre("classic")}> classic</button>
+      <button onClick={() => setGenre("")}> all genres</button>
     </div>
   );
 };
