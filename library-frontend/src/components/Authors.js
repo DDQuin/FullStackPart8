@@ -33,7 +33,7 @@ const Authors = ({ show, authors, setError }) => {
 };
 
 const EditAuthor = ({ setError, authors }) => {
-  const [name, setName] = useState("");
+  const [name, setName] = useState(authors[0].name);
   const [born, setBorn] = useState(0);
   const [editAuthor, result] = useMutation(EDIT_AUTHOR, {
     refetchQueries: [{ query: ALL_AUTHORS }],
@@ -46,7 +46,7 @@ const EditAuthor = ({ setError, authors }) => {
     event.preventDefault();
     const vars = {
       name: name,
-      setBornTo: born,
+      setBornTo: Number(born),
     };
 
     editAuthor({ variables: vars });
