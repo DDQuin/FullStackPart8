@@ -60,16 +60,18 @@ const resolvers = {
     authorCount: async () => Author.collection.countDocuments(),
     allBooks: async (root, args) => {
       if (args.author && args.genre) {
-        const booksAuthorFiltered = books.filter(
-          (b) => b.author === args.author
-        );
-        return booksAuthorFiltered.filter((b) => b.genres.includes(args.genre));
+        const curAuthor = await Author.find({ name: args.author });
+        return await Book.find({
+          author: curAuthor,
+          genres: { $in: [args.genre] },
+        });
       }
       if (args.author) {
-        return books.filter((b) => b.author === args.author);
+        const curAuthor = await Author.find({ name: args.author });
+        return await Book.find({ author: curAuthor });
       }
       if (args.genre) {
-        return books.filter((b) => b.genres.includes(args.genre));
+        return await Book.find({ genres: { $in: [args.genre] } });
       }
 
       return Book.find({});
@@ -82,15 +84,18 @@ const resolvers = {
     name: (root) => root.name,
     born: (root) => root.born,
     id: (root) => root.id,
-    bookCount: (root) => {
-      let bookNum = 0;
-      books.forEach((b) => {
-        if (b.author === root.name) {
-          bookNum = bookNum + 1;
-        }
-      });
+    bookCount: async (root) => {
+      const curAuthor = await Author.findById(root.id);
+      const bookNum = await Book.find({ author: curAuthor }).countDocuments();
       return bookNum;
     },
+  },
+  Book: {
+    title: (root) => root.title,
+    published: (root) => root.published,
+    id: (root) => root.id,
+    genres: (root) => root.genres,
+    author: async (root) => await Author.findById(root.author),
   },
   Mutation: {
     addBook: async (root, args) => {
@@ -117,14 +122,21 @@ const resolvers = {
 
       return book;
     },
-    editAuthor: (root, args) => {
-      const authorToEdit = authors.find((a) => a.name === args.name);
+    editAuthor: async (root, args) => {
+      const authorToEdit = await Author.findOne({ name: args.name });
       if (!authorToEdit) {
         return null;
       }
-      const authorNew = { ...authorToEdit, born: args.setBornTo };
-      authors = authors.map((a) => (a.id === authorNew.id ? authorNew : a));
-      return authorNew;
+      authorToEdit.born = args.setBornTo;
+
+      try {
+        await authorToEdit.save();
+      } catch (error) {
+        throw new UserInputError(error.message, {
+          invalidArgs: args,
+        });
+      }
+      return authorToEdit.save();
     },
   },
 };
