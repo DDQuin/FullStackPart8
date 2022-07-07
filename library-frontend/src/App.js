@@ -11,7 +11,14 @@ import Recommendations from "./components/Recommendation";
 const App = () => {
   useSubscription(BOOK_ADDED, {
     onSubscriptionData: ({ subscriptionData }) => {
-      window.alert(JSON.stringify(subscriptionData.data.bookAdded));
+      const addedBook = subscriptionData.data.bookAdded;
+      notify(`${addedBook.title} added`);
+
+      client.cache.updateQuery({ query: ALL_BOOKS }, ({ allBooks }) => {
+        return {
+          allBooks: allBooks.concat(addedBook),
+        };
+      });
     },
   });
   const [token, setToken] = useState(null);
