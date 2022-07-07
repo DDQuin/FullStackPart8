@@ -41,9 +41,9 @@ const resolvers = {
     born: (root) => root.born,
     id: (root) => root.id,
     bookCount: async (root) => {
-      const curAuthor = await Author.findById(root.id);
-      const bookNum = await Book.find({ author: curAuthor }).countDocuments();
-      return bookNum;
+      const booksAuthor = await Author.findById(root.id).populate("books");
+      const books = booksAuthor.books;
+      return books.length;
     },
   },
   Book: {
@@ -61,28 +61,29 @@ const resolvers = {
       if (!currentUser) {
         throw new AuthenticationError("not authenticated");
       }
-      const author = await Author.findOne({ name: args.author });
+      let author = await Author.findOne({ name: args.author });
       let book;
       if (!author) {
-        const newAuthor = new Author({
+        author = new Author({
           name: args.author,
           born: null,
         });
-        let authorRight;
         try {
-          authorRight = await newAuthor.save();
+          author = await author.save();
         } catch (error) {
           throw new UserInputError(error.message, {
             invalidArgs: args,
           });
         }
-        book = new Book({ ...args, author: authorRight });
+        book = new Book({ ...args, author: author });
       } else {
         book = new Book({ ...args, author: author });
       }
 
       try {
-        await book.save();
+        const savedBook = await book.save();
+        author.books = author.books.concat(savedBook._id);
+        await author.save();
       } catch (error) {
         throw new UserInputError(error.message, {
           invalidArgs: args,
