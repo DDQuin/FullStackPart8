@@ -68,7 +68,14 @@ const resolvers = {
           name: args.author,
           born: null,
         });
-        const authorRight = await newAuthor.save();
+        let authorRight;
+        try {
+          authorRight = await newAuthor.save();
+        } catch (error) {
+          throw new UserInputError(error.message, {
+            invalidArgs: args,
+          });
+        }
         book = new Book({ ...args, author: authorRight });
       } else {
         book = new Book({ ...args, author: author });

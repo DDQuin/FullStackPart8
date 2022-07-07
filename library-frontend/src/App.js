@@ -1,14 +1,19 @@
 import { useState } from "react";
-import { useQuery, useApolloClient } from "@apollo/client";
+import { useQuery, useApolloClient, useSubscription } from "@apollo/client";
 import Authors from "./components/Authors";
 import Books from "./components/Books";
 import NewBook from "./components/NewBook";
 import LoginForm from "./components/LoginForm";
 
-import { ALL_AUTHORS, ALL_BOOKS } from "./queries";
+import { ALL_AUTHORS, ALL_BOOKS, BOOK_ADDED } from "./queries";
 import Recommendations from "./components/Recommendation";
 
 const App = () => {
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      window.alert(JSON.stringify(subscriptionData.data.bookAdded));
+    },
+  });
   const [token, setToken] = useState(null);
   const [page, setPage] = useState("authors");
   const resultAuthor = useQuery(ALL_AUTHORS, {
